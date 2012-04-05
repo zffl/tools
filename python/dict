@@ -2,17 +2,31 @@
 
 import os
 import sys
+import getopt
 import urllib2
+import tempfile
+import subprocess
 import xml.dom.minidom
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 if __name__ == "__main__":
-    argc = len(sys.argv)
-    if argc < 2:
-        print 'usage: dict word'
+    opts ,args = None, None
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'p')
+    except getopt.GetoptError, err:
+        print str(err)
+        print 'usage: dict [-p] word'
         sys.exit()
-    word = sys.argv[1]
+
+    word = args[0]
+    playsound = False
+    for o, a in opts:
+        if o == '-p':
+            playsound = True
+        else:
+            assert False, 'not supported option'
+
     apiurl = "http://dict.youdao.com/fsearch?q="+word
     result = urllib2.urlopen(apiurl).read()
     dom = xml.dom.minidom.parseString(result)
@@ -21,6 +35,12 @@ if __name__ == "__main__":
         if content == '':
             content = node.childNodes[0].data
         print node.childNodes[0].data
-    fp = open(os.path.join(os.environ['HOME'],'dict.txt'),'a')
+    fp = open(os.path.join(os.environ['HOME'],'dict.txt'),'a+')
     fp.write(word + '  ' + content + '\r\n')
     fp.close()
+   
+    if playsound:
+        f = open('/dev/null')
+        soundpath = os.path.join(tempfile.gettempdir(),word + '.mp3')
+        subprocess.call(['wget','-O',soundpath,'http://dict.youdao.com/dictvoice?audio='+word],stdout=f,stdin=f,stderr=f)
+        subprocess.call(['mplayer',soundpath],stdout=f,stdin=f,stderr=f)
