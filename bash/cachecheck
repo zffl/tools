@@ -1,15 +1,12 @@
 #!/bin/bash
 
-command_string = "google-chrome --app "
-  servicepath =
-  "services/axis/_tools/cachesvc.aspx?action=get&type=EFSchools.Englishtown.TeacherTools.Teachers.Cache.TeacherProvider"
-  webpath =
-  "axis/_debug/cachesvc.aspx?action=get&type=EFSchools.Englishtown.TeacherTools.Teachers.Cache.TeacherProvider"
-  for server
-  in $ (seq 5)
-  do
-    eval $command_string \ "http://webus$server".englishtown.com / $servicepath "\"
-    eval $command_string \"http://webus$server." englishtown.com /
-      $webpath "\"
-done
+command_string="google-chrome --app "
 
+servicepath="replace to the real path"
+webpath="replace to the real path"
+
+for server in $(seq 5)
+do 
+    eval $command_string \"http://webus$server".englishtown.com/$servicepath"\"
+    eval $command_string \"http://webus$server."englishtown.com/$webpath"\"
+done
